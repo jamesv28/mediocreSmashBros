@@ -36,21 +36,25 @@ PhaserGame.prototype = {
         this.stationary = this.add.physicsGroup();
         this.stationary.create(0, 96, 'platform');
         this.stationary.create(700, 280, 'platform');
+        this.stationary.create(-5,575,'platform');
+        this.stationary.create(625, 575, 'platform');
         this.stationary.setAll('body.allowGravity', false);
         this.stationary.setAll('body.immovable', true);
         //  Platforms that move
         this.clouds = this.add.physicsGroup();
-        var cloud1 = new CloudPlatform(this.game, 300, 450, 'platform', this.clouds);
+        var cloud1 = new CloudPlatform(this.game, 400, 450, 'platform', this.clouds);
+        cloud1.scale.x = 0.75;
         cloud1.addMotionPath([
             { x: "0", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeIn" },
             { x: "0", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeOut" },
             { x: "0", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeIn" },
             { x: "0", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeOut" }
         ]);
-        var cloud2 = new CloudPlatform(this.game, 100, 296, 'platform', this.clouds);
+        var cloud2 = new CloudPlatform(this.game, 100, 450, 'platform', this.clouds);
+        cloud2.scale.x = 0.5;
         cloud2.addMotionPath([
-            { x: "+0", xSpeed: 2000, xEase: "Linear", y: "+300", ySpeed: 2500, yEase: "Sine.easeIn" },
-            { x: "-0", xSpeed: 2000, xEase: "Linear", y: "-300", ySpeed: 2500, yEase: "Sine.easeOut" }
+            { x: "+100", xSpeed: 2000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
+            { x: "-100", xSpeed: 2000, xEase: "Linear", y: "-0", ySpeed: 2500, yEase: "Sine.easeOut" }
         ]);
 
         //  The Player
