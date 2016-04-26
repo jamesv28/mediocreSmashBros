@@ -25,7 +25,6 @@ PhaserGame.prototype = {
         this.physics.arcade.gravity.y = 600;
     },
     preload: function () {
-
         this.load.image('background', 'assets/spaceLevel/background2.jpg');
         this.load.image('platform', 'assets/spaceLevel/whiteplatform.png');
         this.load.spritesheet('hero', 'assets/sprites/MegaManSprite.png', 41.2,43 );
