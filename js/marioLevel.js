@@ -81,12 +81,12 @@ MarioGame.prototype = {
     this.player2.body.gravity.y = 300;
     this.player2.body.collideWorldBounds = true;
 
-    //  Character Movement
+    //  Character one Movement
     this.player1.animations.add('left', [0, 1, 2, 3], 20, true);
     this.player1.animations.add('right', [6, 7, 8, 9], 20, true);
 		this.player1.animations.add('jump', [10], 20, true);
 		this.player1.animations.add('jumpdown', [18], 20, true);
-
+    // Character two movement
     this.player2.animations.add('left', [0, 1, 2, 3, 4], 11, true);
     this.player2.animations.add('turn', [4], 20, true);
     this.player2.animations.add('right', [7, 8, 9, 10, 11], 11, true);
@@ -129,7 +129,7 @@ MarioGame.prototype = {
     }
 
 		//  The score
-    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    // this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     //  Our controls.
     this.cursors = this.input.keyboard.createCursorKeys();
