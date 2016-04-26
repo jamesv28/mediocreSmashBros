@@ -2,7 +2,7 @@ console.log('SANITY');
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
 var MarioGame = function() {
-  this.player;
+  this.player =null;
   this.platforms;
   this.cursors;
   this.bullets;
@@ -144,10 +144,6 @@ MarioGame.prototype = {
 		{
 			this.player.animations.play('jumpdown');
 		}
-		if(this.fireButton.isDown)
-		{
-			this.fire();
-		}
     else
     {
         //  Stand still
@@ -155,7 +151,10 @@ MarioGame.prototype = {
 
         this.player.frame = 5;
     }
-
+    if(this.fireButton.isDown)
+		{
+			this.fire();
+		}
     //  Allow the player to jump if they are touching the ground.
     if (this.cursors.up.isDown && this.player.body.touching.down)
     {
