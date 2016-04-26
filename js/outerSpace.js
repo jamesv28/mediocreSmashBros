@@ -14,6 +14,9 @@ var PhaserGame = function () {
     this.lockedTo = null;
     this.wasLocked = false;
     this.willJump = false;
+    var music;
+    var jump;
+
 };
 PhaserGame.prototype = {
     init: function () {
@@ -23,20 +26,26 @@ PhaserGame.prototype = {
     },
     preload: function () {
 
-        this.load.image('background', 'assets/background2.jpg');
-        this.load.image('platform', 'assets/whiteplatform.png');
-        this.load.spritesheet('hero', 'assets/MegaManSprite.png', 41.2,43 );
+        this.load.image('background', 'assets/spaceLevel/background2.jpg');
+        this.load.image('platform', 'assets/spaceLevel/whiteplatform.png');
+        this.load.spritesheet('hero', 'assets/sprites/MegaManSprite.png', 41.2,43 );
+        this.load.audio('theBeats', 'assets/sounds/Scott Pilgrim Vs The World - The Game - Scott Pilgrim Theme.mp3');
+        this.load.audio('jump', 'assets/sounds/jump.mp3');
+
 
     },
     create: function () {
         this.background = this.add.tileSprite(0, 0, 800, 600, 'background');
         //this.background.fixedToCamera = true;
-
+        jump = this.add.audio('jump');
+        music = this.add.audio('theBeats');
+        music.play();
 
         this.stationary = this.add.physicsGroup();
-        this.stationary.create(0, 96, 'platform');
-        this.stationary.create(700, 280, 'platform');
+        this.stationary.create(-20, 220, 'platform');
+        this.stationary.create(700, 380, 'platform');
         this.stationary.create(-5,575,'platform');
+        this.stationary.create(300,575,'platform');
         this.stationary.create(625, 575, 'platform');
         this.stationary.setAll('body.allowGravity', false);
         this.stationary.setAll('body.immovable', true);
@@ -55,6 +64,11 @@ PhaserGame.prototype = {
         cloud2.addMotionPath([
             { x: "+100", xSpeed: 2000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
             { x: "-100", xSpeed: 2000, xEase: "Linear", y: "-0", ySpeed: 2500, yEase: "Sine.easeOut" }
+        ]);
+        var cloud3 = new CloudPlatform(this.game, 650, 150,'platform', this.clouds);
+        cloud3.addMotionPath([
+            { x: "+200", xSpeed: 2000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
+            {x: "-200", xSpeed: 2000, xEase: "Linear", y: "-0", ySpeed: 2500, yEase: "Sine.easeOut"}
         ]);
 
         //  The Player
@@ -180,6 +194,7 @@ PhaserGame.prototype = {
                 this.cancelLock();
             }
             this.willJump = true;
+            jump.play();
         }
         if (this.locked)
         {
