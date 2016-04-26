@@ -39,18 +39,28 @@ PhaserGame.prototype = {
     this.physics.arcade.enable(this.ground);
     this.ground.body.collideWorldBounds = true;
 
-    // create platforms
+    // create stationary platforms
     this.stationary = this.add.physicsGroup();
     // this.stationary.create(550, 150, 'rightPlatform');
     // this.stationary.create(0, 300, 'smallLeftPlatform');
     this.stationary.setAll('body.allowGravity', false);
     this.stationary.setAll('body.immovable', true);
 
+    // create moving platforms
+    this.floatingPlatforms = this.add.physicsGroup();
+    this.floatingPlatform1 = new MovingPlatform(this.game, 0, 300, 'smallLeftPlatform', this.floatingPlatforms)
+    this.floatingPlatform1.addMotionPath([
+      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Sine.easeIn" },
+      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Sine.easeIn" }
+      ])
+
+    this.floatingPlatforms.callAll('start')
+
     // create shark baddie
     this.baddies = this.add.physicsGroup();
     this.shark = new Baddie(this.game, -100, 400, 'shark', this.baddies)
     this.shark.addMotionPath([
-      { x: "+900", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn",
+      { x: "+1800", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn",
      }
     ])
 
@@ -61,7 +71,7 @@ PhaserGame.prototype = {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     // Create Player
-    this.player = this.add.sprite(0, 200, 'mario')
+    this.player = this.add.sprite(0, 500, 'mario')
     this.physics.arcade.enable(this.player);
     this.player.body.collideWorldBounds = true;
     this.player.body.setSize(20, 20, 5, 16);
@@ -75,10 +85,10 @@ PhaserGame.prototype = {
     this.player.animations.add('right', [7, 8, 9, 10, 11], 11, true);
 
     // Player1 playerHealth indicator
-    this.playerHealthText = game.add.text(16, 16, 'Health: 100', {
-      fontSize: '32px',
-      fill: '#000'
-    })
+    // this.playerHealthText = game.add.text(16, 16, 'Health: 100', {
+    //   fontSize: '32px',
+    //   fill: '#000'
+    // })
   },   //end of create
 
   update: function() {
