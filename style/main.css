@@ -1,0 +1,36 @@
+@import url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+body {
+    font-size: 100%;
+    padding: 0;
+    background: rgba(201,97,28,1);
+    background: -moz-radial-gradient(center, ellipse cover, rgba(201,97,28,1) 0%, rgba(240,125,24,1) 54%, rgba(230,77,39,1) 100%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(201,97,28,1)), color-stop(54%, rgba(240,125,24,1)), color-stop(100%, rgba(230,77,39,1)));
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(201,97,28,1) 0%, rgba(240,125,24,1) 54%, rgba(230,77,39,1) 100%);
+    background: -o-radial-gradient(center, ellipse cover, rgba(201,97,28,1) 0%, rgba(240,125,24,1) 54%, rgba(230,77,39,1) 100%);
+    background: -ms-radial-gradient(center, ellipse cover, rgba(201,97,28,1) 0%, rgba(240,125,24,1) 54%, rgba(230,77,39,1) 100%);
+    background: radial-gradient(ellipse at center, rgba(201,97,28,1) 0%, rgba(240,125,24,1) 54%, rgba(230,77,39,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9611c', endColorstr='#e64d27', GradientType=1 );
+}
+
+.headerContainer {
+    font-family: 'Press Start 2P', cursive;
+    color: #ffffff;
+    /*margin: auto;*/
+    position: absolute;
+    top: 25%;
+    text-align: center;
+    left: 25%;
+    /*top: 0;*/
+    /*left: 0;*/
+    /*bottom: 0;*/
+    /*right: 0;*/
+}
+
+.headerContainer h1 {
+    font-size: 4rem;
+}
+
+.headerContainer p {
+    font-size: 1.7rem;
+}
+
