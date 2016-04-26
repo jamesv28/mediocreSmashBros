@@ -22,14 +22,14 @@ PhaserGame.prototype = {
 
   preload: function () {
     // Load assets
-    this.load.image('background', 'assets/coralBackground.png');
-    this.load.image('rightPlatform', 'assets/rightwaterplatform.png');
-    this.load.image('smallLeftPlatform', 'assets/smallLeftWaterPlatform.png');
-    this.load.image('floor', 'assets/waterFloor.png');
-    this.load.image('bubble', 'assets/bubble.png');
-    this.load.spritesheet('shark', 'assets/shark1.png', 85, 47);
-    this.load.spritesheet('mario', 'assets/mariosprite.png', 21, 35);
-    this.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    this.load.image('background', 'assets/waterLevel/coralBackground.png');
+    this.load.image('rightPlatform', 'assets/waterLevel/rightwaterplatform.png');
+    this.load.image('smallLeftPlatform', 'assets/waterLevel/smallLeftWaterPlatform.png');
+    this.load.image('floor', 'assets/waterLevel/waterFloor.png');
+    this.load.image('bubble', 'assets/waterLevel/bubble.png');
+    this.load.spritesheet('shark', 'assets/waterLevel/shark1.png', 85, 47);
+    this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
+    this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
   }, //end of preload
 
   create: function () {

@@ -25,10 +25,9 @@ PhaserGame.prototype = {
         this.physics.arcade.gravity.y = 600;
     },
     preload: function () {
-
-        this.load.image('background', 'assets/background2.jpg');
-        this.load.image('platform', 'assets/whiteplatform.png');
-        this.load.spritesheet('hero', 'assets/MegaManSprite.png', 41.2,43 );
+        this.load.image('background', 'assets/spaceLevel/background2.jpg');
+        this.load.image('platform', 'assets/spaceLevel/whiteplatform.png');
+        this.load.spritesheet('hero', 'assets/sprites/MegaManSprite.png', 41.2,43 );
         this.load.audio('theBeats', 'assets/sounds/Scott Pilgrim Vs The World - The Game - Scott Pilgrim Theme.mp3');
         this.load.audio('jump', 'assets/sounds/jump.mp3');
 

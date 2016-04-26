@@ -26,15 +26,15 @@ MarioGame.prototype = {
   },
 
   preload: function() {
-    this.load.image('sky', 'assets/MarioLevelBackground.png');
-    this.load.image('ground', 'assets/ground.png');
-    this.load.image('star', 'assets/star.png');
-		this.load.image('box', 'assets/ledge2.png');
-		this.load.image('littlebox', 'assets/box.png');
-		this.load.image('pipe', 'assets/pipe2.png');
-		this.load.image('bullet', 'assets/bullet2.png')
-    this.load.spritesheet('dude', 'assets/MegaManWholeTest.png', 42, 49);
-    this.load.spritesheet('mario', 'assets/mariosprite.png', 21, 35);
+    this.load.image('sky', 'assets/marioLevel/MarioLevelBackground.png');
+    this.load.image('ground', 'assets/marioLevel/ground.png');
+    this.load.image('star', 'assets/marioLevel/star.png');
+		this.load.image('box', 'assets/marioLevel/ledge2.png');
+		this.load.image('littlebox', 'assets/marioLevel/box.png');
+		this.load.image('pipe', 'assets/marioLevel/pipe2.png');
+		this.load.image('bullet', 'assets/weapons/bullet2.png')
+    this.load.spritesheet('dude', 'assets/sprites/MegaManWholeTest.png', 42, 49);
+    this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
   },
   create: function() {
     this.add.sprite(0, 0, 'sky');
@@ -153,14 +153,12 @@ MarioGame.prototype = {
     {
         //  Move to the left
         this.player1.body.velocity.x = -150;
-
         this.player1.animations.play('left');
     }
     else if (this.cursors.right.isDown)
     {
         //  Move to the right
         this.player1.body.velocity.x = 150;
-
         this.player1.animations.play('right');
     }
 		else if(this.cursors.up.isDown)
@@ -175,7 +173,6 @@ MarioGame.prototype = {
     {
         //  Stand still
         this.player1.animations.stop();
-
         this.player1.frame = 5;
     }
     if(this.fireButton.isDown)
@@ -202,7 +199,7 @@ MarioGame.prototype = {
       this.player2.animations.play('right');
     } else {
       this.player2.animations.stop();
-      this.player2.frame = 4;
+      this.player2.frame = 5;
     }
 
     // Conditional for jumping (P2)
@@ -218,7 +215,7 @@ MarioGame.prototype = {
 
 		//  Add and update the score
     this.score += 10;
-    this.scoreText.text = 'Score: ' + this.score;
+    // this.scoreText.text = 'Score: ' + this.score;
   },
   fire: function() {
     if (this.time.now > this.nextFire && this.bullets.countDead() > 0)
