@@ -3,7 +3,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 
 var MarioGame = function() {
   this.player1 = null;
-  this.player2 = null;
   this.platforms;
   this.cursors;
   this.bullets;
@@ -12,8 +11,6 @@ var MarioGame = function() {
   this.scoreText;
   this.pOneHealth = 100;
   this.pOneHealthText;
-  this.pTwoHealth = 100;
-  this.pTwoHealthText;
   this.fireButton;
   this.fireRate = 100;
   this.nextFire = 0;
@@ -28,13 +25,13 @@ MarioGame.prototype = {
   preload: function() {
     this.load.image('sky', 'assets/marioLevel/MarioLevelBackground.png');
     this.load.image('ground', 'assets/marioLevel/ground.png');
-    this.load.image('star', 'assets/marioLevel/star.png');
+    this.load.image('star', 'assets/marioLevel/marioStar2.png');
 		this.load.image('box', 'assets/marioLevel/ledge2.png');
 		this.load.image('littlebox', 'assets/marioLevel/box.png');
 		this.load.image('pipe', 'assets/marioLevel/pipe2.png');
 		this.load.image('bullet', 'assets/weapons/bullet2.png')
     this.load.spritesheet('dude', 'assets/sprites/MegaManWholeTest.png', 42, 49);
-    this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
+    this.load.spritesheet('turtle', 'assets/marioLevel/marioBad.png', 45, 45);
   },
   create: function() {
     this.add.sprite(0, 0, 'sky');
@@ -61,42 +58,35 @@ MarioGame.prototype = {
 		ledge = this.platforms.create(580, 450, 'pipe');
     ledge.body.immovable = true;
 
+    this.baddies = this.add.physicsGroup();
+    this.turtle = new Baddie(this.game, -100, 400, 'turtle', this.baddies)
+    this.turtle.addMotionPath([
+      { x: "-900", xSpeed: 2500, xEase: "Linear", y: "-0", ySpeed: 6000, yEase: "Sine.easeIn",
+     }
+    ])
+
+    // Run animation for baddies
+    this.baddies.callAll('start');
+
     // The player1 and its settings
     this.player1 = this.add.sprite(32, this.world.height - 150, 'dude');
-    this.player2 = this.add.sprite(300, this.world.height - 350, 'mario');
 
     //  We need to enable physics on the player1
 		this.player1.anchor.set(0.5);
-    this.player2.anchor.set(0.5);
 
     this.physics.enable(this.player1, Phaser.Physics.ARCADE);
-    this.physics.enable(this.player2, Phaser.Physics.ARCADE);
 
     //  Player physics properties. Give the little guy a slight bounce.
     this.player1.body.bounce.y = 0.2;
     this.player1.body.gravity.y = 300;
     this.player1.body.collideWorldBounds = true;
 
-    this.player2.body.bounce.y = 0.2;
-    this.player2.body.gravity.y = 300;
-    this.player2.body.collideWorldBounds = true;
-
-    //  Character one Movement
     this.player1.animations.add('left', [0, 1, 2, 3], 20, true);
     this.player1.animations.add('right', [6, 7, 8, 9], 20, true);
 		this.player1.animations.add('jump', [10], 20, true);
 		this.player1.animations.add('jumpdown', [18], 20, true);
-    // Character two movement
-    this.player2.animations.add('left', [0, 1, 2, 3, 4], 11, true);
-    this.player2.animations.add('turn', [4], 20, true);
-    this.player2.animations.add('right', [7, 8, 9, 10, 11], 11, true);
 
-    this.pOneHealthText = game.add.text(16, 16, 'Player 1 Health: 100', {
-      fontSize: '32px',
-      fill: '#000'
-    })
-
-    this.pTwoHealthText = game.add.text(16, 48, 'Player 2 Health: 100', {
+    this.pOneHealthText = game.add.text(16, 48, 'Player 1 Health: 100', {
       fontSize: '32px',
       fill: '#000'
     })
@@ -116,7 +106,7 @@ MarioGame.prototype = {
     this.stars.enableBody = true;
 
     //  Here we'll create 12 of them evenly spaced apart
-    for (var i = 0; i < 12; i++)
+    for (var i = 0; i < 15; i++)
     {
         //  Create a star inside of the 'stars' group
         var star = this.stars.create(i * 70, 0, 'star');
@@ -129,14 +119,12 @@ MarioGame.prototype = {
     }
 
 		//  The score
-    // this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     //  Our controls.
     this.cursors = this.input.keyboard.createCursorKeys();
 		this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    this.A = this.input.keyboard.addKey(Phaser.Keyboard.A);
-    this.D = this.input.keyboard.addKey(Phaser.Keyboard.D);
-    this.W = this.input.keyboard.addKey(Phaser.Keyboard.W);
+
   },
   update: function() {
     //  Collide the player1 and the stars with the platforms
@@ -185,37 +173,13 @@ MarioGame.prototype = {
         this.player1.body.velocity.y = -350;
     }
 
-    //Player 2 motions
-    this.physics.arcade.collide(this.player2, this.platforms);
-
-    this.player2.body.velocity.x = 0;
-
-    if (this.A.isDown) {
-      this.player2.body.velocity.x = -150;
-      this.player2.animations.play('left');
-    }
-    else if (this.D.isDown) {
-      this.player2.body.velocity.x = 150;
-      this.player2.animations.play('right');
-    } else {
-      this.player2.animations.stop();
-      this.player2.frame = 5;
-    }
-
-    // Conditional for jumping (P2)
-    if (this.W.isDown) {
-      this.player2.body.velocity.y = -350;
-    }
-
-
   },
   collectStar: function(player1, star) {
     // Removes the star from the screen
     star.kill();
-
 		//  Add and update the score
     this.score += 10;
-    // this.scoreText.text = 'Score: ' + this.score;
+    this.scoreText.text = 'Score: ' + this.score;
   },
   fire: function() {
     if (this.time.now > this.nextFire && this.bullets.countDead() > 0)
@@ -230,6 +194,46 @@ MarioGame.prototype = {
     }
   }
 }
+
+Baddie = function (game, x, y, key, group) {
+  if (typeof group === 'undefined') {
+    group = game.world; }
+
+  Phaser.Sprite.call(this, game, x, y, key);
+  game.physics.arcade.enable(this);
+  this.anchor.x = 0.5;
+  this.body.customSeparateX = true;
+  this.body.customSeparateY = true;
+  this.body.allowGravity = false;
+  this.body.immovable = true;
+  this.playerLocked = false;
+  group.add(this);
+};
+
+// Prototypes
+Baddie.prototype = Object.create(Phaser.Sprite.prototype);
+Baddie.prototype.constructor = Baddie;
+
+Baddie.prototype.addMotionPath = function (motionPath) {
+  this.tweenX = this.game.add.tween(this.body);
+  this.tweenY = this.game.add.tween(this.body);
+
+  for (var i = 0; i < motionPath.length; i++)
+  { this.tweenX.to( { x: motionPath[i].x }, motionPath[i].xSpeed, motionPath[i].xEase);
+    this.tweenY.to( { y: motionPath[i].y }, motionPath[i].ySpeed, motionPath[i].yEase);}
+  this.tweenX.loop();
+  this.tweenY.loop();
+};
+
+Baddie.prototype.start = function () {
+  this.tweenX.start();
+  this.tweenY.start();
+};
+
+Baddie.prototype.stop = function () {
+  this.tweenX.stop();
+  this.tweenY.stop();
+};
 
 // Call game
 game.state.add('Game', MarioGame, true);
