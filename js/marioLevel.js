@@ -129,6 +129,13 @@ MarioGame.prototype = {
 
         this.player.animations.play('left');
     }
+    else if (this.cursors.right.isDown)
+    {
+        //  Move to the right
+        this.player.body.velocity.x = 150;
+
+        this.player.animations.play('right');
+    }
 		else if(this.cursors.up.isDown)
 		{
 			this.player.animations.play('jump');
@@ -137,14 +144,7 @@ MarioGame.prototype = {
 		{
 			this.player.animations.play('jumpdown');
 		}
-    else if (this.cursors.right.isDown)
-    {
-        //  Move to the right
-        this.player.body.velocity.x = 150;
-
-        this.player.animations.play('right');
-    }
-		else if(this.fireButton.isDown)
+		if(this.fireButton.isDown)
 		{
 			this.fire();
 		}
