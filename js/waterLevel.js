@@ -1,22 +1,27 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game')
 
 var PhaserGame = function () {
-  this.player = null;
+  this.player1 = null;
+  this.player2 = null;
   this.ground = null;
   this.cursors;
   this.jumpTimer = 0;
-  this.health = 100;
-  this.healthText;
+  this.pOneHealth = 100;
+  this.pOneHealthText;
+  this.pTwoHealth = 100;
+  this.pTwoHealthText;
   this.stationary = null;
 };
 
 PhaserGame.prototype = {
+  // Initialize Game Render and Physics Systen
   init: function () {
     this.game.renderer.renderSession.roundPixels = true;
     this.physics.startSystem(Phaser.Physics.ARCADE);
   },
 
   preload: function () {
+    // Load assets
     this.load.image('background', 'assets/coralBackground.png');
     this.load.image('rightPlatform', 'assets/rightwaterplatform.png');
     this.load.image('smallLeftPlatform', 'assets/smallLeftWaterPlatform.png');
@@ -24,9 +29,11 @@ PhaserGame.prototype = {
     this.load.image('bubble', 'assets/bubble.png');
     this.load.spritesheet('shark', 'assets/shark1.png', 85, 47);
     this.load.spritesheet('mario', 'assets/mariosprite.png', 21, 35);
+    this.load.spritesheet('dude', 'assets/dude.png', 32, 48);
   }, //end of preload
 
   create: function () {
+    // Initialize background
     this.background = this.add.tileSprite(0, 0, 800, 600, 'background');
     this.background.fixedToCamera = true;
 
@@ -51,74 +58,132 @@ PhaserGame.prototype = {
      }
     ])
 
-    // Start baddies
+    // Run animation for baddies
     this.baddies.callAll('start');
 
     // Instantiate cursors
     this.cursors = this.input.keyboard.createCursorKeys();
 
     // Create Player 1
-    this.player = this.add.sprite(0, 500, 'mario')
-    this.physics.arcade.enable(this.player);
-    this.player.body.collideWorldBounds = true;
-    this.player.body.setSize(20, 20, 5, 16);
-    this.player.body.gravity.y = 600;
+    this.player1 = this.add.sprite(0, 500, 'mario')
+    this.physics.arcade.enable(this.player1);
+    this.player1.body.collideWorldBounds = true;
+    this.player1.body.setSize(20, 20, 5, 16);
+    this.player1.body.gravity.y = 600;
 
     // Player directional animations
-    this.player.animations.add('left', [0, 1, 2, 3, 4], 11, true);
-    this.player.animations.add('turn', [4], 20, true);
-    this.player.animations.add('right', [7, 8, 9, 10, 11], 11, true);
+    this.player1.animations.add('left', [0, 1, 2, 3, 4], 11, true);
+    this.player1.animations.add('turn', [4], 20, true);
+    this.player1.animations.add('right', [7, 8, 9, 10, 11], 11, true);
 
-    // Player health indicator
-    this.healthText = game.add.text(16, 16, 'Player 1 Health: 100', {
+    // Player1 pOneHealth indicator
+    this.pOneHealthText = game.add.text(16, 16, 'Player 1 Health: 100', {
+      fontSize: '32px',
+      fill: '#000'
+    })
+
+    // Create Player 2
+    this.player2 = this.add.sprite(700, 100, 'dude')
+    this.physics.arcade.enable(this.player2);
+    this.player2.body.collideWorldBounds = true;
+    this.player2.body.setSize(20, 31, 5, 16);
+    this.player2.body.gravity.y = 600;
+
+    // Player directional animations
+    this.player2.animations.add('left', [0, 1, 2, 3], 10, true);
+    this.player2.animations.add('turn', [4], 20, true);
+    this.player2.animations.add('right', [5, 6, 7, 8], 10, true);
+    // Add new keys for keyboard input for player 2
+    this.A = this.input.keyboard.addKey(Phaser.Keyboard.A);
+    this.D = this.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.W = this.input.keyboard.addKey(Phaser.Keyboard.W);
+
+    // Player2 pOneHealth indicator (P2)
+    this.pTwoHealthText = game.add.text(16, 48, 'Player 2 Health: 100', {
       fontSize: '32px',
       fill: '#000'
     })
   },   //end of create
 
   update: function() {
-    this.physics.arcade.collide(this.player, this.stationary);
-    this.physics.arcade.collide(this.player, this.ground);
-    this.physics.arcade.collide(this.player, this.shark);
+  // PLAYER 1
+    // Player1 Physics
+    this.physics.arcade.collide(this.player1, this.stationary);
+    this.physics.arcade.collide(this.player1, this.ground);
+    this.physics.arcade.collide(this.player1, this.shark);
 
-    this.player.body.velocity.x = 0;
+    this.player1.body.velocity.x = 0;
 
     if (this.cursors.left.isDown) {
-      this.player.body.velocity.x = -150;
-      this.player.animations.play('left');
+      this.player1.body.velocity.x = -150;
+      this.player1.animations.play('left');
     }
     else if (this.cursors.right.isDown) {
-      this.player.body.velocity.x = 150;
-      this.player.animations.play('right');
+      this.player1.body.velocity.x = 150;
+      this.player1.animations.play('right');
     } else {
-      this.player.animations.stop();
-      this.player.frame = 6;
+      this.player1.animations.stop();
+      this.player1.frame = 6;
     }
 
     // conditional for jumping
     if (this.cursors.up.isDown) {
-      this.player.body.velocity.y = -350;
+      this.player1.body.velocity.y = -350;
     }
 
-    // Decrement player health when colliding with shark
-    game.physics.arcade.overlap(this.player, this.shark, lowerHealth, null, this);
+    // Decrement player1 pOneHealth when colliding with shark
+    game.physics.arcade.overlap(this.player1, this.shark, pOneLowerHealth, null, this);
 
-    // Function: Lower player health, kill player
-    function lowerHealth(player, shark) {
-      this.health -= 10;
-      this.healthText.text = 'Health:' + this.health
-      console.log('test');
-      if (this.health === 0) {
-        player.kill()
+    // Function: Lower player1 pOneHealth, kill player1 (P1)
+    function pOneLowerHealth(player1, shark) {
+      this.pOneHealth -= 10;
+      this.pOneHealthText.text = 'Player One Health:' + this.pOneHealth
+      console.log('PlayerOne vs. Shark');
+      if (this.pOneHealth === 0) {
+        player1.kill()
+      }
+    }
+
+  // PLAYER 2
+    // Player2 Physics
+    this.physics.arcade.collide(this.player2, this.stationary);
+    this.physics.arcade.collide(this.player2, this.ground);
+    this.physics.arcade.collide(this.player2, this.shark);
+
+    this.player2.body.velocity.x = 0;
+
+    if (this.A.isDown) {
+      this.player2.body.velocity.x = -150;
+      this.player2.animations.play('left');
+    }
+    else if (this.D.isDown) {
+      this.player2.body.velocity.x = 150;
+      this.player2.animations.play('right');
+    } else {
+      this.player2.animations.stop();
+      this.player2.frame = 4;
+    }
+
+    // Conditional for jumping (P2)
+    if (this.W.isDown) {
+      this.player2.body.velocity.y = -350;
+    }
+
+    // Decrement player2 pTwoHealth when colliding with shark (P2)
+    game.physics.arcade.overlap(this.player2, this.shark, pTwoLowerHealth, null, this);
+
+    // Function: Lower player2 health, kill player2
+    function pTwoLowerHealth(player2, shark) {
+      this.pTwoHealth -= 10;
+      this.pTwoHealthText.text = 'Player Two Health:' + this.pTwoHealth
+      console.log('Player2 vs. Shark');
+      if (this.pTwoHealth === 0) {
+        player2.kill()
       }
     }
 
     // Add bubbles
-    // if (this.bubble.y > 0) {
-      Bubble();
-    // }
-    // console.log(this.bubble)
-
+    Bubble();
 
   }   //end of update
 }
@@ -128,7 +193,6 @@ Baddie = function (game, x, y, key, group) {
     group = game.world; }
 
   Phaser.Sprite.call(this, game, x, y, key);
-  console.log(key)
   game.physics.arcade.enable(this);
   this.anchor.x = 0.5;
   this.body.customSeparateX = true;
@@ -166,7 +230,6 @@ MovingPlatform = function (game, x, y, key, group) {
 
 
 // Prototypes
-
 Baddie.prototype = Object.create(Phaser.Sprite.prototype);
 Baddie.prototype.constructor = Baddie;
 
