@@ -203,11 +203,15 @@ MarioGame.prototype = {
     this.physics.arcade.collide(this.player1, this.platforms);
     this.physics.arcade.collide(this.stars, this.platforms);
     this.physics.arcade.collide(this.player1, this.moveBox, this.customSep, null, this);
+    this.physics.arcade.collide(this.player1, this.turtle);
 
     var standing = this.player1.body.blocked.down || this.player1.body.touching.down || this.locked;
 
     //  Checks to see if the player1 overlaps with any of the stars, if he does call the collectStar function
     this.physics.arcade.overlap(this.player1, this.stars, this.collectStar, null, this);
+
+    // Decease player health
+    game.physics.arcade.overlap(this.player1, this.turtle, this.lowerHealth, null, this);
 
     //  Reset the player1s velocity (movement)
     this.player1.body.velocity.x = 0;
@@ -279,6 +283,14 @@ MarioGame.prototype = {
         bullet.reset(this.player1.x, this.player1.y);
 
         this.physics.arcade.moveToXY(bullet, 500, 500, 400);
+    }
+  },
+  // Function: Lower player playerHealth, kill player
+  lowerHealth: function(player1, turtle) {
+    this.pOneHealth -= 10;
+    this.pOneHealthText.text = 'Health:' + this.pOneHealth
+    if (this.pOneHealth === 0) {
+      player1.kill()
     }
   }
 }
