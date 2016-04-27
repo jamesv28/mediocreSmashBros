@@ -15,7 +15,7 @@ var PhaserGame = function () {
   this.lockedTo = null;
   this.wasLocked = false;
   this.willJump = false;
-  this.jumpCount = 0;
+  // this.jumpCount = 0;
   // this.jumpKey = null;
 };
 
@@ -24,7 +24,7 @@ PhaserGame.prototype = {
   init: function () {
     this.game.renderer.renderSession.roundPixels = true;
     this.physics.startSystem(Phaser.Physics.ARCADE);
-    // this.physics.arcade.gravity.y = 50;
+    this.physics.arcade.gravity.y = 600;
     this.world.resize(800*2, 600);
   },
 
@@ -47,9 +47,15 @@ PhaserGame.prototype = {
     this.background.fixedToCamera = true;
 
     this.ground = this.add.tileSprite(0, 600, 1600, 20, 'floor');
-    this.ground.immovable = true;
     this.physics.arcade.enable(this.ground);
+    this.ground.immovable = true;
     this.ground.body.collideWorldBounds = true;
+
+    // Fixed ground glitch with below code, but ground does not extend full width
+    // this.ground = this.add.physicsGroup();
+    // this.ground.create(0, 570, 'floor')
+    // this.ground.setAll('body.allowGravity', false);
+    // this.ground.setAll('body.immovable', true);
 
     // create stationary platforms
     this.stationary = this.add.physicsGroup();
@@ -121,9 +127,9 @@ PhaserGame.prototype = {
     this.player.animations.add('left', [0, 1, 2, 3], 10, true);
     this.player.animations.add('turn', [4], 20, true);
     this.player.animations.add('right', [5, 6, 7, 8], 10, true);
-    this.player.body.gravity.y = 600;
+    // this.player.body.gravity.y = 600;
 
-    this.camera.follow(this.player);
+    // this.camera.follow(this.player);
 
     //camera follows player
     this.camera.follow(this.player)
@@ -193,8 +199,6 @@ PhaserGame.prototype = {
     this.physics.arcade.collide(this.player, this.stationary);
     this.physics.arcade.collide(this.player, this.ground);
     this.physics.arcade.collide(this.player, this.shark);
-
-    // this.physics.arcade.collide(this.player, this.floatingPlatforms);
     this.physics.arcade.collide(this.player, this.floatingPlatforms, this.customSep, null, this);
 
     //  Do this AFTER the collide check, or we won't have blocked/touching set
@@ -237,8 +241,8 @@ PhaserGame.prototype = {
 
       if (standing) {
         this.jumpCount = 0;
+        // console.log(this.jumpCount)
       }
-
 
     // Jump and double-jump
     this.jumpKey.onDown.add(jumpCheck, this);
@@ -266,7 +270,7 @@ jumpCheck = function () {
     this.player.body.velocity.y = -350;
     this.jumpCount ++;
   }
-  console.log("Jumps:",this.jumps)
+  // console.log("Jumps:",this.jumpCount)
 }
 
 Baddie = function (game, x, y, key, group) {
@@ -319,8 +323,10 @@ Baddie.prototype.addMotionPath = function (motionPath) {
   this.tweenY = this.game.add.tween(this.body);
 
   for (var i = 0; i < motionPath.length; i++)
-  { this.tweenX.to( { x: motionPath[i].x }, motionPath[i].xSpeed, motionPath[i].xEase);
-    this.tweenY.to( { y: motionPath[i].y }, motionPath[i].ySpeed, motionPath[i].yEase);}
+  { this.tweenX.to( { x: motionPath[i].x },
+  motionPath[i].xSpeed, motionPath[i].xEase);
+    this.tweenY.to( { y: motionPath[i].y }, motionPath[i].ySpeed, motionPath[i].yEase);
+  }
   this.tweenX.loop();
   this.tweenY.loop();
 };
