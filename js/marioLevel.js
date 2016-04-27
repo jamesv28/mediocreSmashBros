@@ -15,6 +15,7 @@ var MarioGame = function() {
   this.fireButton;
   this.fireRate = 100;
   this.nextFire = 0;
+  this.bulletTime = 0;
 }
 
 MarioGame.prototype = {
@@ -31,7 +32,7 @@ MarioGame.prototype = {
 		this.load.image('littlebox', 'assets/marioLevel/box.png');
 		this.load.image('pipe', 'assets/marioLevel/pipe2.png');
 		this.load.image('bullet', 'assets/weapons/bullet2.png')
-    this.load.spritesheet('dude', 'assets/sprites/MegaManWholeTest.png', 42, 49);
+    this.load.spritesheet('dude', 'assets/sprites/MegaManSprite2.png', 55, 55);
     this.load.spritesheet('turtle', 'assets/marioLevel/marioBad.png', 45, 45);
     this.load.image('move-box', 'assets/marioLevel/box.png')
   },
@@ -95,16 +96,18 @@ MarioGame.prototype = {
     this.player1.body.gravity.y = 300;
     this.player1.body.collideWorldBounds = true;
 
-    this.player1.animations.add('left', [0, 1, 2, 3], 20, true);
-    this.player1.animations.add('right', [6, 7, 8, 9], 20, true);
-		this.player1.animations.add('jump', [10], 20, true);
-		this.player1.animations.add('jumpdown', [18], 20, true);
+    this.player1.animations.add('left', [0, 1, 2, 3], 13, true);
+    this.player1.animations.add('right', [6, 7, 8, 9], 13, true);
+		this.player1.animations.add('jump', [10], 13, true);
+		this.player1.animations.add('jumpdown', [11], 13, true);
+    this.player1.animations.add('hit', [12], 13, true);
 
     //bullets for megaman
 		this.bullets = this.add.group();
     this.bullets.enableBody = true;
     this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-
+    this.bullets.setAll('anchor.x', 0.5);
+    this.bullets.setAll('anchor.y', 1);
     this.bullets.createMultiple(50, 'bullet');
     this.bullets.setAll('checkWorldBounds', true);
     this.bullets.setAll('outOfBoundsKill', true);
@@ -282,16 +285,27 @@ MarioGame.prototype = {
         var bullet = this.bullets.getFirstDead();
 
         bullet.reset(this.player1.x, this.player1.y);
-
-        this.physics.arcade.moveToXY(bullet, 500, 500, 400);
+        if(this.cursors.right.isDown || this.cursors.up.isDown) {
+          bullet.body.velocity.x = 400;
+        }
+        if(this.cursors.left.isDown || this.cursors.down.isDown) {
+          bullet.body.velocity.x = -400;
+        }
+        else {
+          bullet.body.velocity.x = 400;
+        }
+        // this.physics.arcade.moveToXY(bullet, 500, 500, 400);
     }
   },
   // Function: Lower player playerHealth, kill player
   lowerHealth: function(player1, turtle) {
     this.pOneHealth -= 10;
+    this.player1.animations.play('hit');
     this.pOneHealthText.text = 'Health:' + this.pOneHealth;
     if (this.pOneHealth === 0) {
-      player1.kill()
+      this.player1.animations.play('hit');
+      player1.kill();
+
     }
   }
 }
