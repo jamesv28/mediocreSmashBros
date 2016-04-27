@@ -6,6 +6,8 @@ var PhaserGame = function () {
   this.cursors;
   this.playerHealth = 100;
   this.playerHealthText;
+  this.treasure = "Nope";
+  this.treasureText;
   this.stationary = null;
   this.floatingPlatforms = null;
 
@@ -16,7 +18,7 @@ var PhaserGame = function () {
   this.wasLocked = false;
   this.willJump = false;
   this.jumpCount = 0;
-  this.shark;
+
 };
 
 PhaserGame.prototype = {
@@ -36,7 +38,7 @@ PhaserGame.prototype = {
     this.load.image('smallPlatform', 'assets/waterLevel/smallPlatform.png');
     this.load.image('floor', 'assets/waterLevel/waterFloor.png');
     this.load.image('bubble', 'assets/waterLevel/bubble.png');
-    // this.load.spritesheet('shark', 'assets/waterLevel/shark1.png', 85, 47);
+    this.load.spritesheet('treasure', 'assets/waterLevel/treasure.png', 56, 39);
     this.load.spritesheet('shark', 'assets/waterLevel/customSharkSheet.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
     this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
@@ -123,19 +125,6 @@ PhaserGame.prototype = {
     this.shark2.animations.add('rightBite', [8, 6], 10, true);
     this.shark2.animations.add('leftBite', [9, 7], 10, true);
 
-    // // Shark 3
-    // this.shark3 = new Baddie(this.game, -100, 400, 'shark', this.baddies)
-    // this.shark3.addMotionPath([
-    //   { x: "+600", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
-    //   { x: "-500", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" }
-    // ])
-    // this.shark3.animations.add('right', [0, 1, 2, 1, 0], 10, true);
-    // this.shark3.animations.add('left', [3, 4, 5, 4, 3], 10, true);
-    // this.shark3.animations.add('rightBite', [8, 6], 10, true);
-    // this.shark3.animations.add('leftBite', [9, 7], 10, true);
-
-
-
     // Run animation for baddies
     this.baddies.callAll('start');
 
@@ -171,12 +160,25 @@ PhaserGame.prototype = {
     this.player.animations.add('turn', [4], 20, true);
     this.player.animations.add('right', [7, 8, 9, 10, 11], 11, true);
 
-    // Player1 playerHealth indicator
+    // Player Health and Treasure indicator
     this.playerHealthText = game.add.text(16, 16, 'Health: 100', {
       fontSize: '32px',
       fill: '#000'
     })
     this.playerHealthText.fixedToCamera = true;
+
+    this.treasureText = game.add.text(16, 40, 'Treasure collected: Nope', {
+      fontSize: '32px',
+      fill: '#000'
+    })
+    this.treasureText.fixedToCamera = true;
+
+    this.treasure = this.add.sprite(1550, 50, 'treasure');
+    this.physics.arcade.enable(this.treasure);
+    this.treasure.body.collideWorldBounds = true;
+    this.treasure.body.setSize(56, 39, 0, -10);
+
+
   },   //end of create
 
   customSep: function (player, platform) {
@@ -246,7 +248,7 @@ PhaserGame.prototype = {
   // PLAYER PHYSICS
     this.physics.arcade.collide(this.player, this.stationary);
     this.physics.arcade.collide(this.player, this.ground);
-    this.physics.arcade.collide(this.player, this.shark);
+    this.physics.arcade.collide(this.treasure, this.stationary);
     this.physics.arcade.collide(this.player, this.floatingPlatforms, this.customSep, null, this);
 
     //  Do this AFTER the collide check, or we won't have blocked/touching set
@@ -298,6 +300,7 @@ PhaserGame.prototype = {
     game.physics.arcade.overlap(this.player, this.shark, sharkBite, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, lowerHealth, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, shark2Bite, null, this);
+    game.physics.arcade.overlap(this.player, this.treasure, collectTreasure, null, this);
 
     // Function: Animate shark1 bite
     function sharkBite(player, shark) {
@@ -326,6 +329,13 @@ PhaserGame.prototype = {
       if (this.playerHealth === 0) {
         player.kill()
       }
+    }
+
+    // Function: Collect treasure
+    function collectTreasure(player, treasure) {
+      this.treasure = "Yes!";
+      this.treasureText.text = 'Treasure collected:' + this.treasure
+      treasure.kill()
     }
 
     // Add bubbles
