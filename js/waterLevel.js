@@ -35,7 +35,8 @@ PhaserGame.prototype = {
     this.load.image('smallPlatform', 'assets/waterLevel/smallPlatform.png');
     this.load.image('floor', 'assets/waterLevel/waterFloor.png');
     this.load.image('bubble', 'assets/waterLevel/bubble.png');
-    this.load.spritesheet('shark', 'assets/waterLevel/shark1.png', 85, 47);
+    // this.load.spritesheet('shark', 'assets/waterLevel/shark1.png', 85, 47);
+    this.load.spritesheet('shark', 'assets/waterLevel/newShark2.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
     this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
   }, //end of preload
@@ -96,12 +97,20 @@ PhaserGame.prototype = {
     this.floatingPlatforms.callAll('start')
 
     // create shark baddie
+    // this.baddies = this.add.physicsGroup();
+    // this.shark = new Baddie(this.game, -100, 400, 'shark', this.baddies)
+    // this.shark.addMotionPath([
+    //   { x: "+600", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
+    //   { x: "-500", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" }
+    // ])
     this.baddies = this.add.physicsGroup();
     this.shark = new Baddie(this.game, -100, 400, 'shark', this.baddies)
     this.shark.addMotionPath([
       { x: "+600", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
       { x: "-500", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" }
     ])
+    this.shark.animations.add('right', [0, 1, 2, 1, 0], 10, true);
+    this.shark.animations.add('left', [3, 4, 5, 4, 3], 10, true);
 
     // Run animation for baddies
     this.baddies.callAll('start');
@@ -193,8 +202,18 @@ PhaserGame.prototype = {
     },
 
   update: function() {
-  // PLAYER 1
-    // Player1 Physics
+  // BADDIE PHYSICS
+  // this.shark.play('right')
+  if(this.shark.body.position.x === -200 || this.shark.body.position.x < 1) {
+    {this.shark.play('right')}
+  }
+  if(this.shark.body.position.x === 500)
+   {this.shark.play('left')}
+    // {console.log("position");}
+    // this.shark.play('right')
+    console.log(this.shark.body.position.x)
+
+  // PLAYER PHYSICS
     this.physics.arcade.collide(this.player, this.stationary);
     this.physics.arcade.collide(this.player, this.ground);
     this.physics.arcade.collide(this.player, this.shark);
