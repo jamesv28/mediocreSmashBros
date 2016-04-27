@@ -15,8 +15,7 @@ var PhaserGame = function () {
   this.lockedTo = null;
   this.wasLocked = false;
   this.willJump = false;
-  // this.jumpCount = 0;
-  // this.jumpKey = null;
+  this.jumpCount = 0;
 };
 
 PhaserGame.prototype = {
@@ -295,7 +294,7 @@ Bubble = function () {
     this.bubbles.enableBody = true;
     var x = Math.random()*1600;
     this.bubble = this.bubbles.create(x, 900, 'bubble');
-    this.bubble.body.gravity.y = -100;
+    this.bubble.body.gravity.y = -700;
     }
   }
 
