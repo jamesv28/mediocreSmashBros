@@ -100,11 +100,7 @@ MarioGame.prototype = {
 		this.player1.animations.add('jump', [10], 20, true);
 		this.player1.animations.add('jumpdown', [18], 20, true);
 
-    this.pOneHealthText = game.add.text(16, 48, 'Player 1 Health: 100', {
-      fontSize: '32px',
-      fill: '#000'
-    })
-
+    //bullets for megaman
 		this.bullets = this.add.group();
     this.bullets.enableBody = true;
     this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -134,6 +130,11 @@ MarioGame.prototype = {
 
 		//  The score
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    //Health
+    this.pOneHealthText = this.add.text(16, 48, 'Player Health: 100', {
+      fontSize: '32px',
+      fill: '#000'
+    });
 
     //  Our controls.
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -203,7 +204,7 @@ MarioGame.prototype = {
     this.physics.arcade.collide(this.player1, this.platforms);
     this.physics.arcade.collide(this.stars, this.platforms);
     this.physics.arcade.collide(this.player1, this.moveBox, this.customSep, null, this);
-    this.physics.arcade.collide(this.player1, this.turtle);
+    // this.physics.arcade.collide(this.player1, this.turtle);
 
     var standing = this.player1.body.blocked.down || this.player1.body.touching.down || this.locked;
 
@@ -211,7 +212,7 @@ MarioGame.prototype = {
     this.physics.arcade.overlap(this.player1, this.stars, this.collectStar, null, this);
 
     // Decease player health
-    game.physics.arcade.overlap(this.player1, this.turtle, this.lowerHealth, null, this);
+    this.physics.arcade.overlap(this.player1, this.turtle, this.lowerHealth, null, this);
 
     //  Reset the player1s velocity (movement)
     this.player1.body.velocity.x = 0;
@@ -288,7 +289,7 @@ MarioGame.prototype = {
   // Function: Lower player playerHealth, kill player
   lowerHealth: function(player1, turtle) {
     this.pOneHealth -= 10;
-    this.pOneHealthText.text = 'Health:' + this.pOneHealth
+    this.pOneHealthText.text = 'Health:' + this.pOneHealth;
     if (this.pOneHealth === 0) {
       player1.kill()
     }
