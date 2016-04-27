@@ -300,7 +300,7 @@ PhaserGame.prototype = {
     game.physics.arcade.overlap(this.player, this.shark, sharkBite, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, lowerHealth, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, shark2Bite, null, this);
-    game.physics.arcade.overlap(this.player, this.treasure, collectTreasure, null, this);
+    game.physics.arcade.overlap(this.player, this.treasure, this.Win, null, this);
 
     // Function: Animate shark1 bite
     function sharkBite(player, shark) {
@@ -341,7 +341,10 @@ PhaserGame.prototype = {
     // Add bubbles
     Bubble();
 
-  }   //end of update
+  },   //end of update
+  Win: function () {
+    game.state.start('win');
+  }
 }
 
 jumpCheck = function () {
@@ -447,3 +450,4 @@ MovingPlatform.prototype.stop = function () {
 
 // Call game
 game.state.add('Game', PhaserGame, true);
+game.state.add('win', winState)
