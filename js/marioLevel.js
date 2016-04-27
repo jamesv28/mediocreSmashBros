@@ -25,7 +25,7 @@ MarioGame.prototype = {
   preload: function() {
     this.load.image('sky', 'assets/marioLevel/MarioLevelBackground.png');
     this.load.image('ground', 'assets/marioLevel/ground.png');
-    this.load.image('star', 'assets/marioLevel/marioStar2.png');
+    this.load.image('star', 'assets/marioLevel/marioStar.png');
 		this.load.image('box', 'assets/marioLevel/ledge2.png');
 		this.load.image('littlebox', 'assets/marioLevel/box.png');
 		this.load.image('pipe', 'assets/marioLevel/pipe2.png');
@@ -49,6 +49,9 @@ MarioGame.prototype = {
     var ledge = this.platforms.create(250, 350, 'box');
     ledge.body.immovable = true;
 
+    ledge = this.platforms.create(650, 100, 'box');
+    ledge.body.immovable = true;
+
     ledge = this.platforms.create(100, 350, 'littlebox');
     ledge.body.immovable = true;
 
@@ -59,9 +62,9 @@ MarioGame.prototype = {
     ledge.body.immovable = true;
 
     this.baddies = this.add.physicsGroup();
-    this.turtle = new Baddie(this.game, -100, 400, 'turtle', this.baddies)
+    this.turtle = new Baddie(this.game, 800, 300, 'turtle', this.baddies)
     this.turtle.addMotionPath([
-      { x: "-900", xSpeed: 2500, xEase: "Linear", y: "-0", ySpeed: 6000, yEase: "Sine.easeIn",
+      { x: "-900", xSpeed: 3500, xEase: "Linear", y: "-0", ySpeed: 6000, yEase: "Sine.easeIn",
      }
     ])
 
