@@ -65,13 +65,11 @@ MarioGame.prototype = {
 
     this.moveBox = this.add.physicsGroup();
 
-    var moveBox1 = new CloudPlatform(this.game, 300, 450, 'move-box', this.moveBox);
+    var moveBox1 = new CloudPlatform(this.game, 600, 100, 'move-box', this.moveBox);
 
     moveBox1.addMotionPath([
-        { x: "+200", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeIn" },
-        { x: "-200", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeOut" },
-        { x: "-200", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeIn" },
-        { x: "+200", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeOut" }
+        { x: "-600", xSpeed: 3000, xEase: "Linear", y: "-0", ySpeed: 3000, yEase: "Sine.easeIn" },
+        { x: "+600", xSpeed: 3000, xEase: "Linear", y: "0", ySpeed: 3000, yEase: "Sine.easeOut" },
     ]);
 
     this.baddies = this.add.physicsGroup();
