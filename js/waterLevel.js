@@ -6,6 +6,8 @@ var PhaserGame = function () {
   this.cursors;
   this.playerHealth = 100;
   this.playerHealthText;
+  this.treasure = "Nope";
+  this.treasureText;
   this.stationary = null;
   this.floatingPlatforms = null;
 
@@ -16,6 +18,7 @@ var PhaserGame = function () {
   this.wasLocked = false;
   this.willJump = false;
   this.jumpCount = 0;
+
 };
 
 PhaserGame.prototype = {
@@ -35,7 +38,8 @@ PhaserGame.prototype = {
     this.load.image('smallPlatform', 'assets/waterLevel/smallPlatform.png');
     this.load.image('floor', 'assets/waterLevel/waterFloor.png');
     this.load.image('bubble', 'assets/waterLevel/bubble.png');
-    this.load.spritesheet('shark', 'assets/waterLevel/shark1.png', 85, 47);
+    this.load.spritesheet('treasure', 'assets/waterLevel/treasure.png', 56, 39);
+    this.load.spritesheet('shark', 'assets/waterLevel/customSharkSheet.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
     this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
   }, //end of preload
@@ -70,38 +74,56 @@ PhaserGame.prototype = {
 
     this.floatingPlatform1 = new MovingPlatform(this.game, 0, 300, 'smallLeftPlatform', this.floatingPlatforms)
     this.floatingPlatform1.addMotionPath([
-      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Sine.easeIn" },
-      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Sine.easeIn" }
+      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Linear" },
+      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Linear" }
       ])
 
     this.floatingPlatform2 = new MovingPlatform(this.game, 400, 100, 'smallPlatform', this.floatingPlatforms)
     this.floatingPlatform2.addMotionPath([
-      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Sine.easeIn" },
-      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Sine.easeIn" }
+      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+75", ySpeed: 3500, yEase: "Linear" },
+      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-75", ySpeed: 3000, yEase: "Linear" }
       ])
 
     this.floatingPlatform3 = new MovingPlatform(this.game, 700, 400, 'smallPlatform', this.floatingPlatforms)
     this.floatingPlatform3.addMotionPath([
-      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Sine.easeIn" },
-      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Sine.easeIn" }
+      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 3500, yEase: "Linear" },
+      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 3500, yEase: "Linear" }
       ])
 
     this.floatingPlatform3 = new MovingPlatform(this.game, 1100, 200, 'smallPlatform', this.floatingPlatforms)
     this.floatingPlatform3.addMotionPath([
-      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+150", ySpeed: 3500, yEase: "Sine.easeIn" },
-      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-150", ySpeed: 3500, yEase: "Sine.easeIn" }
+      { x: "+0", xSpeed: 6000, xEase: "Linear", y: "+150", ySpeed: 3500, yEase: "Linear" },
+      { x: "-0", xSpeed: 6000, xEase: "Linear", y: "-150", ySpeed: 3500, yEase: "Linear" }
       ])
 
     // Run floating platforms
     this.floatingPlatforms.callAll('start')
 
-    // create shark baddie
+    // Baddies
+
     this.baddies = this.add.physicsGroup();
+
+    // Shark 1
     this.shark = new Baddie(this.game, -100, 400, 'shark', this.baddies)
     this.shark.addMotionPath([
-      { x: "+600", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
-      { x: "-500", xSpeed: 6000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" }
+      { x: "+600", xSpeed: 6000, xEase: "Linear", y: "-50", ySpeed: 2500, yEase: "Sine.easeIn" },
+      { x: "-500", xSpeed: 6000, xEase: "Linear", y: "+50", ySpeed: 2500, yEase: "Sine.easeIn" }
     ])
+    this.shark.animations.add('right', [0, 1, 2, 1, 0], 10, true);
+    this.shark.animations.add('left', [3, 4, 5, 4, 3], 10, true);
+    this.shark.animations.add('rightBite', [8, 6], 10, true);
+    this.shark.animations.add('leftBite', [9, 7], 10, true);
+
+    // Shark 2
+    this.shark2 = new Baddie(this.game, 600, 200, 'shark', this.baddies)
+    this.shark2.addMotionPath([
+      { x: "+300", xSpeed: 5000, xEase: "Linear", y: "+75", ySpeed: 2500, yEase: "Sine.easeIn" },
+      { x: "-300", xSpeed: 3500, xEase: "Linear", y: "-75", ySpeed: 2500, yEase: "Sine.easeIn" }
+    ])
+    this.shark2.animations.add('right', [0, 1, 2, 1, 0], 10, true);
+    this.shark2.animations.add('left', [3, 4, 5, 4, 3], 10, true);
+    this.shark2.animations.add('rightBite', [8, 6], 10, true);
+    this.shark2.animations.add('leftBite', [9, 7], 10, true);
 
     // Run animation for baddies
     this.baddies.callAll('start');
@@ -138,11 +160,25 @@ PhaserGame.prototype = {
     this.player.animations.add('turn', [4], 20, true);
     this.player.animations.add('right', [7, 8, 9, 10, 11], 11, true);
 
-    // Player1 playerHealth indicator
+    // Player Health and Treasure indicator
     this.playerHealthText = game.add.text(16, 16, 'Health: 100', {
       fontSize: '32px',
       fill: '#000'
     })
+    this.playerHealthText.fixedToCamera = true;
+
+    this.treasureText = game.add.text(16, 40, 'Treasure collected: Nope', {
+      fontSize: '32px',
+      fill: '#000'
+    })
+    this.treasureText.fixedToCamera = true;
+
+    this.treasure = this.add.sprite(1550, 50, 'treasure');
+    this.physics.arcade.enable(this.treasure);
+    this.treasure.body.collideWorldBounds = true;
+    this.treasure.body.setSize(56, 39, 0, -10);
+
+
   },   //end of create
 
   customSep: function (player, platform) {
@@ -193,17 +229,30 @@ PhaserGame.prototype = {
     },
 
   update: function() {
-  // PLAYER 1
-    // Player1 Physics
+  // BADDIE PHYSICS
+  //Shark 1 Animation
+  if(this.shark.body.position.x === -200 || this.shark.body.position.x < 1) {
+    {this.shark.play('right')}
+  }
+  if(this.shark.body.position.x === 500)
+   {this.shark.play('left')}
+
+  // Shark 2 Animation
+  if(this.shark2.body.position.x === 600 || this.shark2.body.position.x === 500) {
+    {this.shark2.play('right')}
+  }
+  if(this.shark2.body.position.x === 900)
+   {this.shark2.play('left')}
+
+
+  // PLAYER PHYSICS
     this.physics.arcade.collide(this.player, this.stationary);
     this.physics.arcade.collide(this.player, this.ground);
-    this.physics.arcade.collide(this.player, this.shark);
+    this.physics.arcade.collide(this.treasure, this.stationary);
     this.physics.arcade.collide(this.player, this.floatingPlatforms, this.customSep, null, this);
 
     //  Do this AFTER the collide check, or we won't have blocked/touching set
     var standing = this.player.body.blocked.down || this.player.body.touching.down || this.locked;
-
-    var flipFlop;
 
     this.player.body.velocity.x = 0;
 
@@ -246,8 +295,32 @@ PhaserGame.prototype = {
     // Jump and double-jump
     this.jumpKey.onDown.add(jumpCheck, this);
 
-    // Decrement player playerHealth when colliding with shark
+    // Decrement player playerHealth when colliding with sharks
     game.physics.arcade.overlap(this.player, this.shark, lowerHealth, null, this);
+    game.physics.arcade.overlap(this.player, this.shark, sharkBite, null, this);
+    game.physics.arcade.overlap(this.player, this.shark2, lowerHealth, null, this);
+    game.physics.arcade.overlap(this.player, this.shark2, shark2Bite, null, this);
+    game.physics.arcade.overlap(this.player, this.treasure, this.Win, null, this);
+
+    // Function: Animate shark1 bite
+    function sharkBite(player, shark) {
+      if (this.shark.animations.currentAnim.name === "right")
+        {this.shark.play('rightBite')}
+      if (this.shark.animations.currentAnim.name === "left")
+        {this.shark.play('leftBite')}
+      // console.log(this.shark.animations.currentAnim.name)
+      this.player.body.velocity.y = -200;
+    }
+
+    // Function: Animate shark2 bite
+    function shark2Bite(player, shark) {
+      if (this.shark2.animations.currentAnim.name === "right")
+        {this.shark2.play('rightBite')}
+      if (this.shark2.animations.currentAnim.name === "left")
+        {this.shark2.play('leftBite')}
+      // console.log(this.shark.animations.currentAnim.name)
+      this.player.body.velocity.y = -200;
+    }
 
     // Function: Lower player playerHealth, kill player
     function lowerHealth(player, shark) {
@@ -258,10 +331,20 @@ PhaserGame.prototype = {
       }
     }
 
+    // Function: Collect treasure
+    function collectTreasure(player, treasure) {
+      this.treasure = "Yes!";
+      this.treasureText.text = 'Treasure collected:' + this.treasure
+      treasure.kill()
+    }
+
     // Add bubbles
     Bubble();
 
-  }   //end of update
+  },   //end of update
+  Win: function () {
+    game.state.start('win');
+  }
 }
 
 jumpCheck = function () {
@@ -367,3 +450,4 @@ MovingPlatform.prototype.stop = function () {
 
 // Call game
 game.state.add('Game', PhaserGame, true);
+game.state.add('win', winState)
