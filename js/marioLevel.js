@@ -7,6 +7,7 @@ var MarioGame = function() {
   this.cursors;
   this.bullets;
   this.stars;
+  this.moveBox;
   this.score = 0;
   this.scoreText;
   this.pOneHealth = 100;
@@ -32,6 +33,7 @@ MarioGame.prototype = {
 		this.load.image('bullet', 'assets/weapons/bullet2.png')
     this.load.spritesheet('dude', 'assets/sprites/MegaManWholeTest.png', 42, 49);
     this.load.spritesheet('turtle', 'assets/marioLevel/marioBad.png', 45, 45);
+    this.load.image('move-box', 'assets/marioLevel/box.png')
   },
   create: function() {
     this.add.sprite(0, 0, 'sky');
@@ -60,6 +62,17 @@ MarioGame.prototype = {
 
 		ledge = this.platforms.create(580, 450, 'pipe');
     ledge.body.immovable = true;
+
+    this.moveBox = this.add.physicsGroup();
+
+    var moveBox1 = new CloudPlatform(this.game, 300, 450, 'move-box', this.moveBox);
+
+    moveBox1.addMotionPath([
+        { x: "+200", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeIn" },
+        { x: "-200", xSpeed: 2000, xEase: "Linear", y: "-200", ySpeed: 2000, yEase: "Sine.easeOut" },
+        { x: "-200", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeIn" },
+        { x: "+200", xSpeed: 2000, xEase: "Linear", y: "+200", ySpeed: 2000, yEase: "Sine.easeOut" }
+    ]);
 
     this.baddies = this.add.physicsGroup();
     this.turtle = new Baddie(this.game, 800, 300, 'turtle', this.baddies)
@@ -127,12 +140,73 @@ MarioGame.prototype = {
     //  Our controls.
     this.cursors = this.input.keyboard.createCursorKeys();
 		this.fireButton = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.moveBox.callAll('start');
 
+  },
+  customSep: function (player1, platform) {
+      if (!this.locked && player1.body.velocity.y > 0)
+      {
+          this.locked = true;
+          this.lockedTo = platform;
+          platform.playerLocked = true;
+          player1.body.velocity.y = 0;
+      }
+  },
+  checkLock: function () {
+      this.player1.body.velocity.y = 0;
+      //  If the player has walked off either side of the platform then they're no longer locked to it
+      if (this.player1.body.right < this.lockedTo.body.x || this.player1.body.x > this.lockedTo.body.right)
+      {
+          this.cancelLock();
+      }
+  },
+  cancelLock: function () {
+      this.wasLocked = true;
+      this.locked = false;
+  },
+  preRender: function () {
+      if (this.game.paused)
+      {
+          //  Because preRender still runs even if your game pauses!
+          return;
+      }
+      if (this.locked || this.wasLocked)
+      {
+          this.player1.x += this.lockedTo.deltaX;
+          this.player1.y = this.lockedTo.y - 48;
+          if (this.player1.body.velocity.x !== 0)
+          {
+              this.player1.body.velocity.y = 0;
+          }
+      }
+      if (this.willJump)
+      {
+          this.willJump = false;
+          if (this.lockedTo && this.lockedTo.deltaY < 0 && this.wasLocked)
+          {
+              //  If the platform is moving up we add its velocity to the players jump
+              this.player1.body.velocity.y = -400 + (this.lockedTo.deltaY * 10);
+          }
+          else
+          {
+              this.player1.body.velocity.y = -400;
+          }
+          this.jumpTimer = this.time.time + 750;
+      }
+      if (this.wasLocked)
+      {
+          this.wasLocked = false;
+          this.lockedTo.playerLocked = false;
+          this.lockedTo = null;
+      }
   },
   update: function() {
     //  Collide the player1 and the stars with the platforms
     this.physics.arcade.collide(this.player1, this.platforms);
     this.physics.arcade.collide(this.stars, this.platforms);
+    this.physics.arcade.collide(this.player1, this.moveBox, this.customSep, null, this);
+
+    var standing = this.player1.body.blocked.down || this.player1.body.touching.down || this.locked;
 
     //  Checks to see if the player1 overlaps with any of the stars, if he does call the collectStar function
     this.physics.arcade.overlap(this.player1, this.stars, this.collectStar, null, this);
@@ -174,6 +248,19 @@ MarioGame.prototype = {
     if (this.cursors.up.isDown && this.player1.body.touching.down)
     {
         this.player1.body.velocity.y = -350;
+    }
+    if (standing && this.cursors.up.isDown && this.time.time > this.jumpTimer)
+    {
+        if (this.locked)
+        {
+            this.cancelLock();
+        }
+        this.willJump = true;
+        jump.play();
+    }
+    if (this.locked)
+    {
+        this.checkLock();
     }
 
   },
@@ -236,6 +323,42 @@ Baddie.prototype.start = function () {
 Baddie.prototype.stop = function () {
   this.tweenX.stop();
   this.tweenY.stop();
+};
+
+CloudPlatform = function (game, x, y, key, group) {
+    if (typeof group === 'undefined') { group = game.world; }
+    Phaser.Sprite.call(this, game, x, y, key);
+    game.physics.arcade.enable(this);
+    this.anchor.x = 0.5;
+    this.body.customSeparateX = true;
+    this.body.customSeparateY = true;
+    this.body.allowGravity = false;
+    this.body.immovable = true;
+    this.playerLocked = false;
+    group.add(this);
+};
+
+CloudPlatform.prototype = Object.create(Phaser.Sprite.prototype);
+CloudPlatform.prototype.constructor = CloudPlatform;
+CloudPlatform.prototype.addMotionPath = function (motionPath) {
+    this.tweenX = this.game.add.tween(this.body);
+    this.tweenY = this.game.add.tween(this.body);
+
+    for (var i = 0; i < motionPath.length; i++)
+    {
+        this.tweenX.to( { x: motionPath[i].x }, motionPath[i].xSpeed, motionPath[i].xEase);
+        this.tweenY.to( { y: motionPath[i].y }, motionPath[i].ySpeed, motionPath[i].yEase);
+    }
+    this.tweenX.loop();
+    this.tweenY.loop();
+};
+CloudPlatform.prototype.start = function () {
+    this.tweenX.start();
+    this.tweenY.start();
+};
+CloudPlatform.prototype.stop = function () {
+    this.tweenX.stop();
+    this.tweenY.stop();
 };
 
 // Call game
