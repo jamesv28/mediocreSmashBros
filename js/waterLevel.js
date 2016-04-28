@@ -51,7 +51,7 @@ PhaserGame.prototype = {
     this.load.image('jumpButton', 'assets/waterLevel/redButton.png');
 
     this.load.spritesheet('treasure', 'assets/waterLevel/treasure.png', 56, 39);
-    this.load.spritesheet('scuba', 'assets/waterLevel/scuba.png', 100, 70);
+    this.load.spritesheet('scuba', 'assets/waterLevel/scubaMan.png', 100, 70);
     this.load.spritesheet('shark', 'assets/waterLevel/customSharkSheet.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
     this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
