@@ -13,6 +13,6 @@ var winState = {
 
   restart: function () {
     game.state.start('Game')
+    game.state.states.Game.playerHealth = 100;
   }
 }
- // add this to waterlevel.js: game.physics.arcade.overlap(this.player, this.treasure, collectTreasure, this.Win, null, this)
