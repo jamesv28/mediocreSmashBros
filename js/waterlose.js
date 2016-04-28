@@ -12,8 +12,7 @@ var loseState = {
   },
 
   restart: function () {
-    game.state.start('Game')
-    console.log(game.state)
+    game.state.start('Game');
     game.state.states.Game.lost = false;
     game.state.states.Game.playerHealth = 100;
   }
