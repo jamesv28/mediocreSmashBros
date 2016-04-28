@@ -23,19 +23,21 @@ PhaserGame.prototype = {
         this.game.renderer.renderSession.roundPixels = true;
         this.physics.startSystem(Phaser.Physics.ARCADE);
         this.physics.arcade.gravity.y = 600;
+        this.world.resize(800 * 2, 600 );
     },
     preload: function () {
-        this.load.image('background', 'assets/spaceLevel/background2.jpg');
-        this.load.image('platform', 'assets/spaceLevel/whiteplatform.png');
+        this.load.image('background', 'assets/spaceLevel/space.png');
+        this.load.image('platform', 'assets/spaceLevel/bluePlatform.png');
         this.load.spritesheet('hero', 'assets/sprites/MegaManSprite.png', 41.2,43 );
         this.load.audio('theBeats', 'assets/sounds/Scott Pilgrim Vs The World - The Game - Scott Pilgrim Theme.mp3');
         this.load.audio('jump', 'assets/sounds/jump.mp3');
 
 
+
     },
     create: function () {
         this.background = this.add.tileSprite(0, 0, 800, 600, 'background');
-        //this.background.fixedToCamera = true;
+        this.background.fixedToCamera = true;
         jump = this.add.audio('jump');
         music = this.add.audio('theBeats');
         music.play();
@@ -44,7 +46,8 @@ PhaserGame.prototype = {
         this.stationary.create(-20, 220, 'platform');
         this.stationary.create(700, 380, 'platform');
         this.stationary.create(-5,575,'platform');
-        this.stationary.create(300,575,'platform');
+        this.smallPlatform = this.stationary.create(300,575,'platform').scale.x = 0.75;
+        //this.smallPlatform.scale.x = 0.75;
         this.stationary.create(625, 575, 'platform');
         this.stationary.setAll('body.allowGravity', false);
         this.stationary.setAll('body.immovable', true);
@@ -71,16 +74,18 @@ PhaserGame.prototype = {
         ]);
 
         //  The Player
-         this.player = this.add.sprite(32, 0, 'hero');
+        this.player = this.add.sprite(32, 0, 'hero');
 
-         this.physics.arcade.enable(this.player);
+        this.camera.follow(this.player);
+
+        this.physics.arcade.enable(this.player);
         //
-         this.player.body.collideWorldBounds = true;
-         this.player.body.setSize(20, 32, 5, 16);
+        this.player.body.collideWorldBounds = true;
+        this.player.body.setSize(20, 32, 5, 16);
 
-         this.player.animations.add('left', [0, 1, 2, 3,4], 10, true);
-         //this.player.animations.add('turn', [4], 20, true);
-         this.player.animations.add('right', [5, 6, 7, 8,9], 10, true);
+        this.player.animations.add('left', [0, 1, 2, 3,4], 10, true);
+        //this.player.animations.add('turn', [4], 20, true);
+        this.player.animations.add('right', [5, 6, 7, 8,9], 10, true);
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
