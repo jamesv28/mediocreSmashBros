@@ -6,7 +6,6 @@ var PhaserGame = function () {
   this.cursors;
   this.playerHealth = 100;
   this.playerHealthText;
-  this.treasure = "Nope";
   this.treasureText;
   this.stationary = null;
   this.floatingPlatforms = null;
@@ -18,6 +17,13 @@ var PhaserGame = function () {
   this.wasLocked = false;
   this.willJump = false;
   this.jumpCount = 0;
+
+  this.pad;
+  this.rightButton;
+  this.leftButton;
+  this.jumpButton;
+  this.movingLeft = false;
+  this.movingRight = false;
 
 };
 
@@ -38,6 +44,10 @@ PhaserGame.prototype = {
     this.load.image('smallPlatform', 'assets/waterLevel/smallPlatform.png');
     this.load.image('floor', 'assets/waterLevel/waterFloor.png');
     this.load.image('bubble', 'assets/waterLevel/bubble.png');
+    this.load.image('rightStick', 'assets/waterLevel/rightArrow.png');
+    this.load.image('leftStick', 'assets/waterLevel/leftArrow.png');
+    this.load.image('jumpButton', 'assets/waterLevel/redButton.png');
+
     this.load.spritesheet('treasure', 'assets/waterLevel/treasure.png', 56, 39);
     this.load.spritesheet('shark', 'assets/waterLevel/customSharkSheet.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
@@ -132,6 +142,15 @@ PhaserGame.prototype = {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.jumpKey = this.input.keyboard.addKey(Phaser.Keyboard.UP);
 
+    // Instantiate Buttons
+    this.rightButton = this.add.button(50, 0, 'rightStick', moveRight, this)
+    this.leftButton = this.add.button(0, 0, 'leftStick', moveLeft, this)
+    this.jumpButton = this.add.button(100, 0, 'jumpButton', moveUp, this)
+
+    this.rightButton.fixedToCamera = true;
+    this.leftButton.fixedToCamera = true;
+    this.jumpButton.fixedToCamera = true;
+
     // Create Player
     // Mario Sprite
     // this.player = this.add.sprite(0, 200, 'mario')
@@ -148,36 +167,26 @@ PhaserGame.prototype = {
     this.player.animations.add('left', [0, 1, 2, 3], 10, true);
     this.player.animations.add('turn', [4], 20, true);
     this.player.animations.add('right', [5, 6, 7, 8], 10, true);
-    // this.player.body.gravity.y = 600;
-
-    // this.camera.follow(this.player);
 
     //camera follows player
     this.camera.follow(this.player)
 
     // Player directional animations
-    this.player.animations.add('left', [0, 1, 2, 3, 4], 11, true);
+    this.player.animations.add('left', [0, 1, 2, 3], 10, true);
     this.player.animations.add('turn', [4], 20, true);
-    this.player.animations.add('right', [7, 8, 9, 10, 11], 11, true);
+    this.player.animations.add('right', [7, 8, 9, 10, 11], 10, true);
 
     // Player Health and Treasure indicator
-    this.playerHealthText = game.add.text(16, 16, 'Health: 100', {
+    this.playerHealthText = game.add.text(16, 48, 'Health: 100', {
       fontSize: '32px',
       fill: '#000'
     })
     this.playerHealthText.fixedToCamera = true;
 
-    this.treasureText = game.add.text(16, 40, 'Treasure collected: Nope', {
-      fontSize: '32px',
-      fill: '#000'
-    })
-    this.treasureText.fixedToCamera = true;
-
     this.treasure = this.add.sprite(1550, 50, 'treasure');
     this.physics.arcade.enable(this.treasure);
     this.treasure.body.collideWorldBounds = true;
     this.treasure.body.setSize(56, 39, 0, -10);
-
 
   },   //end of create
 
@@ -257,13 +266,13 @@ PhaserGame.prototype = {
     this.player.body.velocity.x = 0;
 
 
-    if (this.cursors.left.isDown)
+    if (this.cursors.left.isDown || this.movingLeft)
       { this.player.body.velocity.x = -150;
         if (this.facing !== 'left')
         { this.player.play('left');
           this.facing = 'left'; }
       }
-      else if (this.cursors.right.isDown)
+      else if (this.cursors.right.isDown || this.movingRight)
       { this.player.body.velocity.x = 150;
         if (this.facing !== 'right')
         { this.player.play('right');
@@ -333,8 +342,6 @@ PhaserGame.prototype = {
 
     // Function: Collect treasure
     function collectTreasure(player, treasure) {
-      this.treasure = "Yes!";
-      this.treasureText.text = 'Treasure collected:' + this.treasure
       treasure.kill()
     }
 
@@ -347,12 +354,27 @@ PhaserGame.prototype = {
   }
 }
 
+moveRight = function() {
+  this.player.body.velocity.x = 150;
+  this.movingLeft = false;
+  this.movingRight = true;
+}
+
+moveLeft = function() {
+  this.player.body.velocity.x = -150;
+  this.movingRight = false;
+  this.movingLeft = true;
+}
+moveUp = function() {
+  this.player.body.velocity.y = -350;
+  console.log('jump')
+}
+
 jumpCheck = function () {
   if (this.jumpCount < 2) {
     this.player.body.velocity.y = -350;
     this.jumpCount ++;
   }
-  // console.log("Jumps:",this.jumpCount)
 }
 
 Baddie = function (game, x, y, key, group) {
