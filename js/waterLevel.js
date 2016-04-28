@@ -51,6 +51,7 @@ PhaserGame.prototype = {
     this.load.image('jumpButton', 'assets/waterLevel/redButton.png');
 
     this.load.spritesheet('treasure', 'assets/waterLevel/treasure.png', 56, 39);
+    this.load.spritesheet('scuba', 'assets/waterLevel/scuba.png', 100, 70);
     this.load.spritesheet('shark', 'assets/waterLevel/customSharkSheet.png', 200, 98);
     this.load.spritesheet('mario', 'assets/sprites/mariosprite.png', 21, 35);
     this.load.spritesheet('dude', 'assets/sprites/dude.png', 32, 48);
@@ -154,29 +155,27 @@ PhaserGame.prototype = {
     this.jumpButton.fixedToCamera = true;
 
     // Create Player
-    // Mario Sprite
-    // this.player = this.add.sprite(0, 200, 'mario')
-    // this.physics.arcade.enable(this.player);
-    // this.player.body.collideWorldBounds = true;
-    // this.player.body.setSize(20, 20, 5, 16);
-    // this.player.body.gravity.y = 600;
 
     //  Dude Sprite
-    this.player = this.add.sprite(32, 0, 'dude');
+    // this.player = this.add.sprite(32, 0, 'dude');
+    // this.physics.arcade.enable(this.player);
+    // this.player.body.collideWorldBounds = true;
+    // this.player.body.setSize(20, 32, 5, 16);
+    // this.player.animations.add('left', [0, 1, 2, 3], 10, true);
+    // this.player.animations.add('turn', [4], 20, true);
+    // this.player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+    // Scuba Sprite
+    this.player = this.add.sprite(32, 150, 'scuba');
     this.physics.arcade.enable(this.player);
     this.player.body.collideWorldBounds = true;
-    this.player.body.setSize(20, 32, 5, 16);
+    this.player.body.setSize(70, 50, 5, 0);
     this.player.animations.add('left', [0, 1, 2, 3], 10, true);
     this.player.animations.add('turn', [4], 20, true);
-    this.player.animations.add('right', [5, 6, 7, 8], 10, true);
+    this.player.animations.add('right', [4, 5, 6, 7], 10, true);
 
     //camera follows player
     this.camera.follow(this.player)
-
-    // Player directional animations
-    this.player.animations.add('left', [0, 1, 2, 3], 10, true);
-    this.player.animations.add('turn', [4], 20, true);
-    this.player.animations.add('right', [7, 8, 9, 10, 11], 10, true);
 
     // Player Health and Treasure indicator
     this.playerHealthText = game.add.text(16, 48, 'Health: 100', {
