@@ -25,6 +25,8 @@ var PhaserGame = function () {
   this.movingLeft = false;
   this.movingRight = false;
 
+  this.lost = false;
+
 };
 
 PhaserGame.prototype = {
@@ -309,6 +311,7 @@ PhaserGame.prototype = {
     game.physics.arcade.overlap(this.player, this.shark, sharkBite, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, lowerHealth, null, this);
     game.physics.arcade.overlap(this.player, this.shark2, shark2Bite, null, this);
+
     game.physics.arcade.overlap(this.player, this.treasure, this.Win, null, this);
 
     // Function: Animate shark1 bite
@@ -317,7 +320,6 @@ PhaserGame.prototype = {
         {this.shark.play('rightBite')}
       if (this.shark.animations.currentAnim.name === "left")
         {this.shark.play('leftBite')}
-      // console.log(this.shark.animations.currentAnim.name)
       this.player.body.velocity.y = -200;
     }
 
@@ -327,7 +329,6 @@ PhaserGame.prototype = {
         {this.shark2.play('rightBite')}
       if (this.shark2.animations.currentAnim.name === "left")
         {this.shark2.play('leftBite')}
-      // console.log(this.shark.animations.currentAnim.name)
       this.player.body.velocity.y = -200;
     }
 
@@ -337,20 +338,25 @@ PhaserGame.prototype = {
       this.playerHealthText.text = 'Health:' + this.playerHealth
       if (this.playerHealth === 0) {
         player.kill()
+        this.lost = true;
       }
-    }
-
-    // Function: Collect treasure
-    function collectTreasure(player, treasure) {
-      treasure.kill()
     }
 
     // Add bubbles
     Bubble();
 
+    // End game if player dead
+    if (this.lost) {
+      this.Lose();
+    }
+
   },   //end of update
   Win: function () {
     game.state.start('win');
+  },
+  Lose: function () {
+    console.log("lost");
+    game.state.start('lose');
   }
 }
 
@@ -367,7 +373,6 @@ moveLeft = function() {
 }
 moveUp = function() {
   this.player.body.velocity.y = -350;
-  console.log('jump')
 }
 
 jumpCheck = function () {
@@ -473,3 +478,4 @@ MovingPlatform.prototype.stop = function () {
 // Call game
 game.state.add('Game', PhaserGame, true);
 game.state.add('win', winState)
+game.state.add('lose', loseState)
