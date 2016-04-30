@@ -14,8 +14,7 @@ var PhaserGame = function () {
     this.lockedTo = null;
     this.wasLocked = false;
     this.willJump = false;
-    var music;
-    var jump;
+
 
 };
 PhaserGame.prototype = {
@@ -47,7 +46,6 @@ PhaserGame.prototype = {
         this.stationary.create(700, 380, 'platform');
         this.stationary.create(-5,575,'platform');
         this.smallPlatform = this.stationary.create(300,575,'platform').scale.x = 0.75;
-        //this.smallPlatform.scale.x = 0.75;
         this.stationary.create(625, 575, 'platform');
         this.stationary.setAll('body.allowGravity', false);
         this.stationary.setAll('body.immovable', true);
@@ -116,7 +114,6 @@ PhaserGame.prototype = {
     preRender: function () {
         if (this.game.paused)
         {
-            //  Because preRender still runs even if your game pauses!
             return;
         }
         if (this.locked || this.wasLocked)
