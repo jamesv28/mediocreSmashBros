@@ -49,6 +49,7 @@ PhaserGame.prototype = {
         this.stationary.create(625, 575, 'platform');
         this.stationary.setAll('body.allowGravity', false);
         this.stationary.setAll('body.immovable', true);
+
         //  Platforms that move
         this.clouds = this.add.physicsGroup();
         var cloud1 = new CloudPlatform(this.game, 400, 450, 'platform', this.clouds);
@@ -70,25 +71,20 @@ PhaserGame.prototype = {
             { x: "+200", xSpeed: 2000, xEase: "Linear", y: "+0", ySpeed: 2500, yEase: "Sine.easeIn" },
             {x: "-200", xSpeed: 2000, xEase: "Linear", y: "-0", ySpeed: 2500, yEase: "Sine.easeOut"}
         ]);
+        this.clouds.callAll('start');
 
         //  The Player
         this.player = this.add.sprite(32, 0, 'hero');
-
         this.camera.follow(this.player);
-
         this.physics.arcade.enable(this.player);
-        //
         this.player.body.collideWorldBounds = true;
         this.player.body.setSize(20, 32, 5, 16);
-
+        //  animations from the sprite sheet
         this.player.animations.add('left', [0, 1, 2, 3,4], 10, true);
-        //this.player.animations.add('turn', [4], 20, true);
         this.player.animations.add('right', [5, 6, 7, 8,9], 10, true);
 
+        //allow cursors for game
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.clouds.callAll('start');
-
     },
     customSep: function (player, platform) {
         if (!this.locked && player.body.velocity.y > 0)
@@ -147,8 +143,10 @@ PhaserGame.prototype = {
         }
     },
     update: function () {
+
         this.background.tilePosition.x = -(this.camera.x * 0.7);
-        // this.lava.tilePosition.x = -(this.camera.x * 10);
+
+        //collision detection for the player and the platforms moving and stationary
         this.physics.arcade.collide(this.player, this.stationary);
         this.physics.arcade.collide(this.player, this.clouds, this.customSep, null, this);
         //  Do this AFTER the collide check, or we won't have blocked/touching set
@@ -242,4 +240,6 @@ CloudPlatform.prototype.stop = function () {
     this.tweenX.stop();
     this.tweenY.stop();
 };
+
+
 game.state.add('Game', PhaserGame, true);
